@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Domain.Entities.Base;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
     [Table("TblEmployees")]
-    public class Employee
+    public class Employee : AuditableEntity
     {
+        [Key]
         public int Id { get; set; }
         public string FullName { get; set; }
         public string Position { get; set; }
