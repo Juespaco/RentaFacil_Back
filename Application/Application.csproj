@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="MediatR\Bookings\" />
     <Folder Include="MediatR\Clients\" />
-    <Folder Include="MediatR\Vehicles\" />
   </ItemGroup>
 
 </Project>

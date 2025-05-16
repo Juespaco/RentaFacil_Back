@@ -31,6 +31,36 @@ namespace Infrastructure.EntityFramework
 
             base.OnModelCreating(modelBuilder);
 
+            //Identity
+            modelBuilder.Entity<Agency>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<Booking>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<BookingEmployeePerDay>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<Client>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<Employee>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<Vehicle>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<VehicleType>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            //Foreign keys
             modelBuilder.Entity<Employee>()
                 .HasOne(e => e.Agency)
                 .WithMany(a => a.Employees)
@@ -61,6 +91,7 @@ namespace Infrastructure.EntityFramework
                 .WithMany(e => e.BookingEmployeePerDay)
                 .HasForeignKey(be => be.EmployeeId);
 
+            //Seed
             modelBuilder.Entity<Agency>().HasData(
                 new Agency { Id = 1, Name = "Bogota", Address = "Cra 12 #45-67", Phone = "3001234567", CreatedBy = "seed", CreatedAt = DateTime.UtcNow },
                 new Agency { Id = 2, Name = "Medellin", Address = "Cra 55 #50-67", Phone = "3001234568", CreatedBy = "seed", CreatedAt = DateTime.UtcNow }
@@ -103,19 +134,7 @@ namespace Infrastructure.EntityFramework
             );
         }
 
-        public override int SaveChanges()
-        {
-            ApplyAuditInfo();
-            return base.SaveChanges();
-        }
-
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            ApplyAuditInfo();
-            return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void ApplyAuditInfo()
         {
             var entries = ChangeTracker
                 .Entries<AuditableEntity>();
@@ -125,14 +144,18 @@ namespace Infrastructure.EntityFramework
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedAt = DateTime.UtcNow;
-                    entry.Entity.CreatedBy = "system"; 
+                    entry.Entity.CreatedBy = "system";
                 }
                 else if (entry.State == EntityState.Modified)
                 {
+                    entry.Property(e => e.CreatedAt).IsModified = false;
+                    entry.Property(e => e.CreatedBy).IsModified = false;
                     entry.Entity.ModifiedAt = DateTime.UtcNow;
-                    entry.Entity.ModifiedBy = "system"; 
+                    entry.Entity.ModifiedBy = "system";
                 }
             }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }
