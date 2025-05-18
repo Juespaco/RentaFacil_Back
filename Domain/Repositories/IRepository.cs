@@ -15,7 +15,14 @@ namespace Domain.Repositories
         int pageNumber = 1,
         int pageSize = 10);
 
-        Task<T> GetByIdAsync(long id);
+        Task<IReadOnlyList<T>> GetMulipleAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            List<Expression<Func<T, object>>>? includes = null,
+            bool disableTracking = true
+        );
+
+        Task<T> GetByIdAsync(int id);
 
         //Add Methods
         Task<T> AddAsync(T entity);

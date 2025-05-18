@@ -23,6 +23,36 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("LastExecuted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("RunNow")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeSpan>("ScheduledTime")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TblActivities", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RunNow = false,
+                            ScheduledTime = new TimeSpan(0, 22, 0, 0, 0)
+                        });
+                });
+
             modelBuilder.Entity("Domain.Entities.Agency", b =>
                 {
                     b.Property<int>("Id")
@@ -33,6 +63,18 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -46,6 +88,26 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TblAgencies", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "Cra 12 #45-67",
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4272),
+                            CreatedBy = "seed",
+                            Name = "Bogota",
+                            Phone = "3001234567"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "Cra 55 #50-67",
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4279),
+                            CreatedBy = "seed",
+                            Name = "Medellin",
+                            Phone = "3001234568"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Booking", b =>
@@ -59,11 +121,26 @@ namespace Infrastructure.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -75,9 +152,109 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ClientId");
 
+                    b.HasIndex("EmployeeId");
+
                     b.HasIndex("VehicleId");
 
                     b.ToTable("TblBookings", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClientId = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4487),
+                            CreatedBy = "seed",
+                            EmployeeId = 2,
+                            EndDate = new DateTime(2025, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClientId = 2,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4489),
+                            CreatedBy = "seed",
+                            EmployeeId = 3,
+                            EndDate = new DateTime(2025, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClientId = 3,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4491),
+                            CreatedBy = "seed",
+                            EmployeeId = 2,
+                            EndDate = new DateTime(2025, 6, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClientId = 4,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4492),
+                            CreatedBy = "seed",
+                            EmployeeId = 2,
+                            EndDate = new DateTime(2025, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClientId = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4494),
+                            CreatedBy = "seed",
+                            EmployeeId = 3,
+                            EndDate = new DateTime(2025, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClientId = 2,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4496),
+                            CreatedBy = "seed",
+                            EmployeeId = 2,
+                            EndDate = new DateTime(2025, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClientId = 3,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4497),
+                            CreatedBy = "seed",
+                            EmployeeId = 3,
+                            EndDate = new DateTime(2025, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClientId = 4,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4499),
+                            CreatedBy = "seed",
+                            EmployeeId = 2,
+                            EndDate = new DateTime(2025, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsProcessed = false,
+                            StartDate = new DateTime(2025, 6, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VehicleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.BookingEmployeePerDay", b =>
@@ -91,8 +268,20 @@ namespace Infrastructure.Migrations
                     b.Property<int>("BookingsNumber")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("day")
                         .HasColumnType("datetime2");
@@ -112,12 +301,28 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Document")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
@@ -127,6 +332,48 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TblClients", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4423),
+                            CreatedBy = "seed",
+                            Document = "55555",
+                            Email = "carlos@example.com",
+                            FullName = "Carlos Pérez",
+                            Phone = "3109876543"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4425),
+                            CreatedBy = "seed",
+                            Document = "66666",
+                            Email = "maria.fernandez@example.com",
+                            FullName = "María Fernández",
+                            Phone = "3112345678"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4426),
+                            CreatedBy = "seed",
+                            Document = "77777",
+                            Email = "juan.rodriguez@example.com",
+                            FullName = "Juan Rodríguez",
+                            Phone = "3123456789"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4428),
+                            CreatedBy = "seed",
+                            Document = "88888",
+                            Email = "laura.mendez@example.com",
+                            FullName = "Laura Méndez",
+                            Phone = "3134567890"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Employee", b =>
@@ -140,8 +387,20 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AgencyId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Position")
@@ -153,6 +412,35 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AgencyId");
 
                     b.ToTable("TblEmployees", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AgencyId = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4445),
+                            CreatedBy = "seed",
+                            FullName = "Ana Torres",
+                            Position = "Administrador"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AgencyId = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4446),
+                            CreatedBy = "seed",
+                            FullName = "David Gómez",
+                            Position = "Asesor"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AgencyId = 2,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4447),
+                            CreatedBy = "seed",
+                            FullName = "Santiago Ruiz",
+                            Position = "Asesor"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Vehicle", b =>
@@ -163,12 +451,27 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BookingValuePerDay")
+                        .HasColumnType("int");
+
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Model")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlateNumber")
@@ -186,6 +489,32 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VehicleTypeId");
 
                     b.ToTable("TblVehicles", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BookingValuePerDay = 100000,
+                            Brand = "Toyota",
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4402),
+                            CreatedBy = "seed",
+                            Model = "Corolla",
+                            PlateNumber = "ABC123",
+                            VehicleTypeId = 1,
+                            Year = 2020
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BookingValuePerDay = 150000,
+                            Brand = "Mazda",
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4405),
+                            CreatedBy = "seed",
+                            Model = "CX-5",
+                            PlateNumber = "XYZ789",
+                            VehicleTypeId = 2,
+                            Year = 2022
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.VehicleType", b =>
@@ -196,6 +525,18 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -203,6 +544,29 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TblVehicleTypes", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4381),
+                            CreatedBy = "seed",
+                            Name = "Sedán"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4382),
+                            CreatedBy = "seed",
+                            Name = "SUV"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 5, 18, 19, 40, 34, 286, DateTimeKind.Utc).AddTicks(4385),
+                            CreatedBy = "seed",
+                            Name = "Camioneta"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Booking", b =>
@@ -215,7 +579,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Entities.Employee", "Employee")
                         .WithMany("Bookings")
-                        .HasForeignKey("ClientId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

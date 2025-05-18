@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: vehiclesapi 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehiclesapi
+  template:
+    metadata:
+      labels:
+        app: vehiclesapi 
+    spec:
+      containers:
+        - name: vehiclesapi 
+          image: rentafacilacr.azurecr.io/vehicleapi:latest
+          ports:
+          - containerPort: 80

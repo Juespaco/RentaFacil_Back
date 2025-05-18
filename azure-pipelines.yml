@@ -1,0 +1,81 @@
+trigger:
+- main
+
+pool:
+  name: agents-on-aks
+
+variables:
+  tag: 'latest'
+  imagepullSecret: 'secretnameaks'
+  imageRepository: 'vehicleapi'
+  containerRegistry: 'rentafacilacr.azurecr.io'
+  
+
+stages:
+  - stage: BuildPushDockerImage
+    displayName: build and puh image
+    jobs:
+      - job: BuildImage
+        displayName: Build and push docker image
+        continueOnError: false
+        steps:
+          - task: Docker@2
+            displayName: DockerBuildPUS ACR
+            inputs:
+              containerRegistry: 'rentafacilacr-sc'
+              repository: '$(imageRepository)'
+              command: 'buildAndPush'
+              Dockerfile: '$(Build.SourcesDirectory)/WebApi/Dockerfile'
+              buildContext: '$(Build.SourcesDirectory)'
+              tags: '$(tag)'
+          - task: PublishPipelineArtifact@1
+            displayName: PublishArtifacts
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/s/manifests'
+              artifact: 'manifests'
+              publishLocation: 'pipeline'
+  - stage: DeployToKubernetes
+    displayName: DeploymentToAKS
+    condition: succeeded('BuildPushDockerImage')
+    dependsOn: BuildPushDockerImage
+    jobs:
+      - deployment: DeploymentJob
+        displayName: DeploymentToAKS
+        environment: 'EnvToAKS.default'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: DownloadArtifacts
+                  inputs:
+                    buildType: 'current'
+                    artifactName: 'manifests'
+                    targetPath: '$(Pipeline.Workspace)/manifests'
+                - task: KubernetesManifest@1
+                  displayName: CreateSecret
+                  inputs:
+                    action: 'createSecret'
+                    connectionType: 'azureResourceManager'
+                    azureSubscriptionConnection: 'rentafacilaks-sc'
+                    azureResourceGroup: 'RentaFacilGR'
+                    kubernetesCluster: 'RentaFacilAKS'
+                    namespace: 'default'
+                    secretType: 'dockerRegistry'
+                    secretName: '$(imagepullSecret)'
+                    dockerRegistryEndpoint: 'rentafacilacr-sc'
+                - task: KubernetesManifest@1
+                  displayName: Deploy
+                  inputs:
+                    action: 'deploy'
+                    connectionType: 'azureResourceManager'
+                    azureSubscriptionConnection: 'rentafacilaks-sc'
+                    azureResourceGroup: 'RentaFacilGR'
+                    kubernetesCluster: 'RentaFacilAKS'
+                    namespace: 'default'
+                    manifests: |
+                      $(Pipeline.Workspace)/manifests/deployment.yml
+                      $(Pipeline.Workspace)/manifests/service.yml
+                    containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+                    imagePullSecrets: '$(imagepullSecret)'
+                    rolloutStatusTimeout: '90'

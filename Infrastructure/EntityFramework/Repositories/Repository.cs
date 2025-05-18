@@ -59,7 +59,31 @@ namespace Infrastructure.EntityFramework.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(long id)
+        public async Task<IReadOnlyList<T>> GetMulipleAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            List<Expression<Func<T, object>>>? includes = null,
+            bool disableTracking = true
+        )
+        {
+            IQueryable<T> query = _context.Set<T>();
+            if (disableTracking) query = query.AsNoTracking();
+
+            if (includes != null)
+                foreach (var includeExpression in includes)
+                    query = query.Include(includeExpression);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            if (orderBy != null)
+                return await orderBy(query).ToListAsync();
+
+            return await query.ToListAsync();
+        }
+
+
+        public async Task<T> GetByIdAsync(int id)
         {
             return (await _context.Set<T>().FindAsync(id))!;
         }
